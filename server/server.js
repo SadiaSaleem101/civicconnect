@@ -4,7 +4,6 @@ const cors = require("cors");
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
-
 const issueRoutes = require("./routes/IssueRoutes");
 
 const app = express();
@@ -19,15 +18,17 @@ app.get("/", (req, res) => {
   res.status(200).send("CivicConnect API is running...");
 });
 
-// Authentication Routes
+// Routes
 app.use("/api/auth", authRoutes);
-
-// Civic Issue Routes
 app.use("/api/issues", issueRoutes);
 
 // Connect to MongoDB and start server
 const startServer = async () => {
   try {
+    if (!process.env.MONGO_URI) {
+      throw new Error("MONGO_URI is not defined. Check your .env file.");
+    }
+
     await mongoose.connect(process.env.MONGO_URI);
 
     console.log("MongoDB connected successfully");
